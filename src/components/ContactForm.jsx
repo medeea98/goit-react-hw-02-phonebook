@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import styles from './ContactForm.module.css'
+import styles from './ContactForm.module.css';
+import PropTypes from 'prop-types';
+
 class ContactForm extends Component {
   state = {
     name: '',
@@ -13,9 +15,11 @@ class ContactForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { name, number } = this.state;
-    if (name.trim() !== '') {
+    if (!isNaN(number)) { 
       this.props.addContact(name, number);
       this.setState({ name: '', number: '' });
+    } else {
+      alert('Please enter a valid phone number.'); 
     }
   };
 
@@ -47,5 +51,9 @@ class ContactForm extends Component {
     );
   }
 }
+
+ContactForm.propTypes = {
+  addContact: PropTypes.func.isRequired, 
+};
 
 export default ContactForm;
