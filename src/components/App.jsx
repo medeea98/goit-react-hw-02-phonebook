@@ -10,13 +10,39 @@ export class App extends Component {
     filter: ''
   };
 
+  constructor() {
+    super();
+
+    this.state = {
+      contacts: this.getLocalStorageContacts(),
+      filter: '',
+    }
+  }
+
+  getLocalStorageContacts = () => {
+    const localStorageContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+    const localStorageContactsArray = [];
+
+    localStorageContacts.forEach((contact) => {
+      localStorageContactsArray.push(contact);
+    });
+
+    return localStorageContactsArray;
+  }
+
   addContact = (name, number) => {
     const { contacts } = this.state;
     const newContact = {
-      id: nanoid,
+      id: nanoid(),
       name,
       number
     };
+
+    const localStorageContacts = this.getLocalStorageContacts();
+    localStorageContacts.push(newContact);
+
+    localStorage.setItem('contacts', JSON.stringify(localStorageContacts));
+
     this.setState({ contacts: [...contacts, newContact] });
   };
 
@@ -28,6 +54,16 @@ export class App extends Component {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact.id !== id)
     }));
+
+    const localStorageContacts = this.getLocalStorageContacts();
+
+    localStorageContacts.forEach((contact, index) => {
+      if (contact.id === id) {
+        localStorageContacts.splice(index, 1);
+      }
+    });
+
+    localStorage.setItem('contacts', JSON.stringify(localStorageContacts));
   };
 
   render() {
